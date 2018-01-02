@@ -69,6 +69,7 @@ import org.eclipse.che.multiuser.api.permission.server.PermissionChecker;
 import org.eclipse.che.multiuser.api.permission.server.PermissionCheckerImpl;
 import org.eclipse.che.multiuser.keycloak.server.deploy.KeycloakModule;
 import org.eclipse.che.multiuser.machine.authentication.server.MachineAuthModule;
+import org.eclipse.che.multiuser.machine.authentication.server.SignaturePublicKeyEnvProvider;
 import org.eclipse.che.multiuser.organization.api.OrganizationApiModule;
 import org.eclipse.che.multiuser.organization.api.OrganizationJpaModule;
 import org.eclipse.che.multiuser.resource.api.ResourceModule;
@@ -148,6 +149,7 @@ public class WsMasterModule extends AbstractModule {
     envVarProviders.addBinding().to(CheApiEnvVarProvider.class);
     envVarProviders.addBinding().to(MachineTokenEnvVarProvider.class);
     envVarProviders.addBinding().to(WorkspaceIdEnvVarProvider.class);
+    envVarProviders.addBinding().to(SignaturePublicKeyEnvProvider.class);
 
     envVarProviders.addBinding().to(JavaOptsEnvVariableProvider.class);
     envVarProviders.addBinding().to(MavenOptsEnvVariableProvider.class);

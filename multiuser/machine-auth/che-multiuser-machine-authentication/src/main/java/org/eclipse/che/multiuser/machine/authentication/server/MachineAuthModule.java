@@ -33,5 +33,6 @@ public class MachineAuthModule extends AbstractModule {
     bind(MachineSessionInvalidator.class).asEagerSingleton();
 
     bind(MachineTokenProvider.class).to(MachineTokenProviderImpl.class);
+    bind(SignatureKeyManager.class);
   }
 }

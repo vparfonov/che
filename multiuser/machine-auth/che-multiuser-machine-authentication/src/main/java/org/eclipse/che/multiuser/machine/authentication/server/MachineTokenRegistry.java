@@ -10,17 +10,23 @@
  */
 package org.eclipse.che.multiuser.machine.authentication.server;
 
+import static io.jsonwebtoken.SignatureAlgorithm.RS512;
 import static java.lang.String.format;
-import static org.eclipse.che.commons.lang.NameGenerator.generate;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
+import com.google.gson.Gson;
+import io.jsonwebtoken.Jwts;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.commons.env.EnvironmentContext;
+import org.eclipse.che.commons.subject.Subject;
+import org.eclipse.che.commons.subject.SubjectImpl;
 
 /**
  * Table-based storage of machine security tokens. Table rows is workspace id's, columns - user
@@ -31,6 +37,10 @@ import org.eclipse.che.api.core.NotFoundException;
  */
 @Singleton
 public class MachineTokenRegistry {
+
+  private static final Gson GSON = new Gson();
+
+  @Inject private SignatureKeyManager signatureKeyManager;
 
   private final Table<String, String, String> tokens = HashBasedTable.create();
   private final ReadWriteLock lock = new ReentrantReadWriteLock();
@@ -45,9 +55,20 @@ public class MachineTokenRegistry {
   public String generateToken(String userId, String workspaceId) {
     lock.writeLock().lock();
     try {
-      final String token = generate("machine", 128);
-      tokens.put(workspaceId, userId, token);
-      return token;
+      final SignatureKeyPair keyPair = signatureKeyManager.getKeyPair();
+      final Subject subject = EnvironmentContext.getCurrent().getSubject();
+      SubjectImpl withoutToken =
+          new SubjectImpl(subject.getUserName(), subject.getUserId(), null, subject.isTemporary());
+      final String machineToken =
+              Jwts.builder()
+                  .setPayload(GSON.toJson(withoutToken))
+                  .setHeader(new HashMap<String, Object>(){{
+                    put("kind", "machine");
+                  }})
+                  .signWith(RS512, keyPair.getPrivate())
+                  .compact();
+      tokens.put(workspaceId, userId, machineToken);
+      return machineToken;
     } finally {
       lock.writeLock().unlock();
     }
