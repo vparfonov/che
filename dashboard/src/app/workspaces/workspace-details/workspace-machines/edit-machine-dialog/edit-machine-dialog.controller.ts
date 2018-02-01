@@ -296,7 +296,7 @@ export class EditMachineDialogController {
         delete newPod.spec;
         if (!angular.equals(originPod, newPod)) {
           this.copyEnvironment = angular.copy(this.environment);
-          this.copyEnvironment = this.environmentManager.deleteMachine(this.copyEnvironment, this.originMachine.name);
+          this.copyEnvironment = this.environmentManager.deleteMachine(this.copyEnvironment, this.environmentManager.getMachineName(this.originMachine));
           this.copyEnvironment = this.environmentManager.addMachine(this.copyEnvironment, this.machine);
         }
       }
