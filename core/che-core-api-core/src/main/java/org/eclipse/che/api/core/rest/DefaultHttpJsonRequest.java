@@ -12,6 +12,8 @@ package org.eclipse.che.api.core.rest;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Objects.requireNonNull;
+import static javax.ws.rs.core.UriBuilder.fromUri;
+import static org.eclipse.che.api.core.util.HttpJsonRequestUtil.createErrorMessage;
 
 import com.google.common.io.CharStreams;
 import java.io.IOException;
@@ -144,7 +146,7 @@ public class DefaultHttpJsonRequest implements HttpJsonRequest {
 
   @Override
   public String getUrl() {
-    final UriBuilder ub = UriBuilder.fromUri(url);
+    final UriBuilder ub = fromUri(url);
     if (queryParams != null) {
       for (Pair<String, ?> parameter : queryParams) {
         ub.queryParam(parameter.first, parameter.second);
@@ -200,7 +202,7 @@ public class DefaultHttpJsonRequest implements HttpJsonRequest {
     final String authToken = EnvironmentContext.getCurrent().getSubject().getToken();
     final boolean hasQueryParams = parameters != null && !parameters.isEmpty();
     if (hasQueryParams || authToken != null) {
-      final UriBuilder ub = UriBuilder.fromUri(url);
+      final UriBuilder ub = fromUri(url);
       // remove sensitive information from url.
       ub.replaceQueryParam("token", EMPTY_ARRAY);
 
@@ -281,9 +283,8 @@ public class DefaultHttpJsonRequest implements HttpJsonRequest {
         }
         // Can't parse content as json or content has format other we expect for error.
         throw new IOException(
-            String.format(
-                "Failed access: %s, method: %s, response code: %d, message: %s",
-                UriBuilder.fromUri(url).replaceQuery("token").build(), method, responseCode, str));
+            createErrorMessage(
+                fromUri(url).replaceQuery("token").build().toString(), method, responseCode, str));
       }
       final String contentType = conn.getContentType();
       if (responseCode != HttpURLConnection.HTTP_NO_CONTENT

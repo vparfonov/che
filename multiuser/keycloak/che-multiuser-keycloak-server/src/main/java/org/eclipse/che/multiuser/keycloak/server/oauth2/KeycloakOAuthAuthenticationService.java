@@ -10,9 +10,14 @@
  */
 package org.eclipse.che.multiuser.keycloak.server.oauth2;
 
+import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
+import static org.eclipse.che.api.core.util.HttpJsonRequestUtil.getAsJsonObject;
+import static org.eclipse.che.api.core.util.HttpJsonRequestUtil.getErrorMessage;
+import static org.eclipse.che.api.core.util.HttpJsonRequestUtil.getResponseCode;
 import static org.eclipse.che.multiuser.keycloak.shared.KeycloakConstants.AUTH_SERVER_URL_SETTING;
 import static org.eclipse.che.multiuser.keycloak.shared.KeycloakConstants.REALM_SETTING;
 
+import com.google.gson.JsonObject;
 import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.impl.DefaultClaims;
 import java.io.IOException;
@@ -51,6 +56,9 @@ import org.eclipse.che.multiuser.keycloak.server.KeycloakSettings;
 
 @Path("/oauth")
 public class KeycloakOAuthAuthenticationService {
+  private static final String ERROR_FIELD = "errorMessage";
+  private static final String UNAUTHORIZED_PATTERN = "Client .+ not authorized .+";
+
   @Context UriInfo uriInfo;
 
   @Context SecurityContext security;
@@ -138,7 +146,22 @@ public class KeycloakOAuthAuthenticationService {
           .withToken(params.get("access_token"))
           .withScope(params.get("scope"));
     } catch (IOException e) {
-      throw new ServerException(e.getMessage());
+      String message = e.getMessage();
+
+      String jsonMessage = getErrorMessage(message);
+      JsonObject jsonObject = getAsJsonObject(jsonMessage);
+
+      String error =
+          jsonObject != null && jsonObject.has(ERROR_FIELD)
+              ? jsonObject.get(ERROR_FIELD).getAsString()
+              : message;
+
+      int responseCode = getResponseCode(message);
+      if (UNAUTHORIZED.getStatusCode() == responseCode || error.matches(UNAUTHORIZED_PATTERN)) {
+        throw new UnauthorizedException(error);
+      }
+
+      throw new ServerException(error);
     }
   }
 
