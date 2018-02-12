@@ -60,13 +60,16 @@ public class MachineTokenRegistry {
       SubjectImpl withoutToken =
           new SubjectImpl(subject.getUserName(), subject.getUserId(), null, subject.isTemporary());
       final String machineToken =
-              Jwts.builder()
-                  .setPayload(GSON.toJson(withoutToken))
-                  .setHeader(new HashMap<String, Object>(){{
-                    put("kind", "machine");
-                  }})
-                  .signWith(RS512, keyPair.getPrivate())
-                  .compact();
+          Jwts.builder()
+              .setPayload(GSON.toJson(withoutToken))
+              .setHeader(
+                  new HashMap<String, Object>() {
+                    {
+                      put("kind", "machine");
+                    }
+                  })
+              .signWith(RS512, keyPair.getPrivate())
+              .compact();
       tokens.put(workspaceId, userId, machineToken);
       return machineToken;
     } finally {
