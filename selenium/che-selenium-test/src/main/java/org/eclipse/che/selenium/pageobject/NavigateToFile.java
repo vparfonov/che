@@ -27,6 +27,7 @@ import org.eclipse.che.selenium.core.SeleniumWebDriver;
 import org.eclipse.che.selenium.core.action.ActionsFactory;
 import org.eclipse.che.selenium.core.utils.WaitUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
@@ -104,6 +105,13 @@ public class NavigateToFile {
     fileNameInput.clear();
     WaitUtils.sleepQuietly(1); // timeout for waiting that input field is cleared
     fileNameInput.sendKeys(symbol);
+
+    // delete it when issue is fixed
+    WaitUtils.sleepQuietly(1);
+    fileNameInput.sendKeys(symbol);
+    WaitUtils.sleepQuietly(1);
+    actionsFactory.createAction(seleniumWebDriver).sendKeys(Keys.BACK_SPACE).build().perform();
+    WaitUtils.sleepQuietly(1);
   }
 
   /**
