@@ -147,11 +147,14 @@ public class NavigateToFile {
    * @param pathName full name - means the name of file with path
    */
   public void selectFileByFullName(String pathName) {
-    new WebDriverWait(seleniumWebDriver, REDRAW_UI_ELEMENTS_TIMEOUT_SEC)
-        .until(
-            visibilityOfElementLocated(
-                By.xpath(format(Locators.FILE_NAME_LIST_SELECT_WITH_PATH, pathName))))
-        .click();
+    WebElement webElement =
+        new WebDriverWait(seleniumWebDriver, REDRAW_UI_ELEMENTS_TIMEOUT_SEC)
+            .until(
+                visibilityOfElementLocated(
+                    By.xpath(format(Locators.FILE_NAME_LIST_SELECT_WITH_PATH, pathName))));
+
+    webElement.click();
+    WaitUtils.sleepQuietly(500, MILLISECONDS);
     actionsFactory.createAction(seleniumWebDriver).doubleClick().perform();
     waitFormToClose();
   }
@@ -171,6 +174,7 @@ public class NavigateToFile {
     webElement.click();
     WaitUtils.sleepQuietly(500, MILLISECONDS);
     actionsFactory.createAction(seleniumWebDriver).doubleClick(webElement).perform();
+    waitFormToClose();
   }
 
   /** close the Navigate to file widget by 'Escape' key and wait closing of the widget */

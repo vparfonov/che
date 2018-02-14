@@ -139,7 +139,7 @@ public class NavigateToFileTest {
 
     // extract the path (without opened class)
     String dropdownVerificationPath = expectedItems.get(numValueFromDropDawnList).split(" ")[1];
-
+    System.out.println(dropdownVerificationPath);
     String openedFileWithExtension = expectedItems.get(numValueFromDropDawnList).split(" ")[0];
 
     // extract the name of opened files that display in a tab (the ".java" extension are not shown
