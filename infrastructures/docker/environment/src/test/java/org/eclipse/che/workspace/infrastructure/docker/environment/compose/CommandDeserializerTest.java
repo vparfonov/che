@@ -84,7 +84,7 @@ public class CommandDeserializerTest {
     assertEquals(composeRecipe.getServices().size(), 1);
     ComposeService service = composeRecipe.getServices().get("machine1");
     assertEquals(service.getImage(), "codenvy/mysql");
-    assertEquals(service.getMemLimit().longValue(), 2147483648L);
+    assertEquals(Long.parseLong(service.getMemLimit()), 2147483648L);
     Map<String, String> environment = service.getEnvironment();
     assertEquals(environment.size(), 2);
     assertEquals(environment.get("MYSQL_USER"), "petclinic");

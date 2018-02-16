@@ -146,7 +146,7 @@ public class ComposeEnvironmentFactoryTest {
 
   private static ComposeService mockComposeService(long ramLimit) {
     final ComposeService composeServiceMock = mock(ComposeService.class);
-    when(composeServiceMock.getMemLimit()).thenReturn(ramLimit);
+    when(composeServiceMock.getMemLimit()).thenReturn(String.valueOf(ramLimit));
     return composeServiceMock;
   }
 

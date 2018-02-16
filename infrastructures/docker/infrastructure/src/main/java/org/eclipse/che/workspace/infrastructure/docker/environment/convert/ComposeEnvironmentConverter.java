@@ -15,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.eclipse.che.api.core.ValidationException;
 import org.eclipse.che.api.workspace.server.spi.environment.InternalEnvironment;
+import org.eclipse.che.commons.lang.Size;
 import org.eclipse.che.workspace.infrastructure.docker.environment.compose.ComposeEnvironment;
 import org.eclipse.che.workspace.infrastructure.docker.environment.compose.model.ComposeService;
 import org.eclipse.che.workspace.infrastructure.docker.model.DockerBuildContext;
@@ -41,7 +42,14 @@ public class ComposeEnvironmentConverter implements DockerEnvironmentConverter {
     for (Map.Entry<String, ComposeService> composeServiceEntry :
         composeEnv.getServices().entrySet()) {
       ComposeService service = composeServiceEntry.getValue();
-
+      Long memoryLimit = null;
+      try {
+        if (service.getMemLimit() != null) {
+          memoryLimit = Size.parseSize(service.getMemLimit());
+        }
+      } catch (IllegalArgumentException e) {
+        throw new ValidationException("Invalid service memory limit value");
+      }
       DockerContainerConfig cheContainer =
           new DockerContainerConfig()
               .setCommand(service.getCommand())
@@ -53,7 +61,7 @@ public class ComposeEnvironmentConverter implements DockerEnvironmentConverter {
               .setImage(service.getImage())
               .setLabels(service.getLabels())
               .setLinks(service.getLinks())
-              .setMemLimit(service.getMemLimit())
+              .setMemLimit(memoryLimit)
               .setNetworks(service.getNetworks())
               .setPorts(service.getPorts())
               .setVolumes(service.getVolumes())

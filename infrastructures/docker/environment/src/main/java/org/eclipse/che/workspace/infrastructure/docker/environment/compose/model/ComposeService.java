@@ -56,7 +56,7 @@ public class ComposeService {
   private List<String> volumesFrom;
 
   @JsonProperty("mem_limit")
-  private Long memLimit;
+  private String memLimit;
 
   private BuildContext build;
   private List<String> networks;
@@ -389,15 +389,15 @@ public class ComposeService {
   }
 
   /** Memory limit for the container of service, specified in bytes. */
-  public Long getMemLimit() {
+  public String getMemLimit() {
     return memLimit;
   }
 
-  public void setMemLimit(Long memLimit) {
+  public void setMemLimit(String memLimit) {
     this.memLimit = memLimit;
   }
 
-  public ComposeService withMemLimit(Long memLimit) {
+  public ComposeService withMemLimit(String memLimit) {
     this.memLimit = memLimit;
     return this;
   }

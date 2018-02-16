@@ -82,7 +82,7 @@ public class ComposeEnvironmentConverterTest {
                     "com.example.label-with-empty-value",
                     ""))
             .withLinks(asList("machine1", "machine2:db"))
-            .withMemLimit(2147483648L)
+            .withMemLimit("2gb")
             .withNetworks(asList("some-network", "other-network"))
             .withPorts(asList("3000", "3000-3005"))
             .withVolumes(asList("/opt/data:/var/lib/mysql", "~/configs:/etc/configs/:ro"))

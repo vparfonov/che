@@ -30,12 +30,12 @@ import javax.inject.Singleton;
 import org.eclipse.che.api.core.ValidationException;
 import org.eclipse.che.api.core.model.workspace.Warning;
 import org.eclipse.che.api.installer.server.InstallerRegistry;
-import org.eclipse.che.api.workspace.server.spi.InfrastructureException;
 import org.eclipse.che.api.workspace.server.spi.environment.InternalEnvironmentFactory;
 import org.eclipse.che.api.workspace.server.spi.environment.InternalMachineConfig;
 import org.eclipse.che.api.workspace.server.spi.environment.InternalRecipe;
 import org.eclipse.che.api.workspace.server.spi.environment.MachineConfigsValidator;
 import org.eclipse.che.api.workspace.server.spi.environment.RecipeRetriever;
+import org.eclipse.che.commons.lang.Size;
 import org.eclipse.che.workspace.infrastructure.docker.environment.compose.model.ComposeRecipe;
 import org.eclipse.che.workspace.infrastructure.docker.environment.compose.model.ComposeService;
 
@@ -70,7 +70,7 @@ public class ComposeEnvironmentFactory extends InternalEnvironmentFactory<Compos
   @Override
   protected ComposeEnvironment doCreate(
       InternalRecipe recipe, Map<String, InternalMachineConfig> machines, List<Warning> warnings)
-      throws InfrastructureException, ValidationException {
+      throws ValidationException {
     String contentType = recipe.getContentType();
     checkNotNull(contentType, "Recipe content type should not be null");
 
@@ -108,7 +108,7 @@ public class ComposeEnvironmentFactory extends InternalEnvironmentFactory<Compos
   @VisibleForTesting
   void addRamLimitAttribute(
       Map<String, InternalMachineConfig> machines, Map<String, ComposeService> services)
-      throws InfrastructureException {
+      throws ValidationException {
     for (Entry<String, ComposeService> entry : services.entrySet()) {
       InternalMachineConfig machineConfig;
       if ((machineConfig = machines.get(entry.getKey())) == null) {
@@ -117,8 +117,14 @@ public class ComposeEnvironmentFactory extends InternalEnvironmentFactory<Compos
       }
       final Map<String, String> attributes = machineConfig.getAttributes();
       if (isNullOrEmpty(attributes.get(MEMORY_LIMIT_ATTRIBUTE))) {
-        final Long ramLimit = entry.getValue().getMemLimit();
-        if (ramLimit != null && ramLimit > 0) {
+        Long ramLimit;
+        try {
+          ramLimit = Size.parseSize(entry.getValue().getMemLimit());
+        } catch (IllegalArgumentException e) {
+          throw new ValidationException(
+              String.format("Invalid memory limit value for service '%s'", entry.getKey()));
+        }
+        if (ramLimit > 0) {
           attributes.put(MEMORY_LIMIT_ATTRIBUTE, String.valueOf(ramLimit));
         } else {
           attributes.put(MEMORY_LIMIT_ATTRIBUTE, defaultMachineMemorySizeAttribute);
