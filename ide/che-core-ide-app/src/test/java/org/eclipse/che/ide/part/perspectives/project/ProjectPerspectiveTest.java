@@ -23,7 +23,6 @@ import com.google.gwtmockito.GwtMockitoTestRunner;
 import com.google.web.bindery.event.shared.EventBus;
 import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.api.parts.PartStackView;
-import org.eclipse.che.ide.command.explorer.CommandsExplorerPresenter;
 import org.eclipse.che.ide.part.PartStackPresenter;
 import org.eclipse.che.ide.part.PartStackPresenterFactory;
 import org.eclipse.che.ide.part.PartStackViewFactory;
@@ -63,7 +62,6 @@ public class ProjectPerspectiveTest {
   @Mock private DynaProvider dynaProvider;
   @Mock private NotificationManager notificationManager;
   @Mock private ProjectExplorerPresenter projectExplorerPresenter;
-  @Mock private CommandsExplorerPresenter commandsExplorerPresenter;
   @Mock private ProcessesPanelPresenter processesPanelPresenter;
 
   private ProjectPerspective perspective;
@@ -104,7 +102,6 @@ public class ProjectPerspectiveTest {
             eventBus,
             dynaProvider,
             projectExplorerPresenter,
-            commandsExplorerPresenter,
             notificationManager,
             processesPanelPresenter);
   }

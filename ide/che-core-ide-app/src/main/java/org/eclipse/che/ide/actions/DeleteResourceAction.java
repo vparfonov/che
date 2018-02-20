@@ -28,15 +28,12 @@ import org.eclipse.che.ide.api.action.AbstractPerspectiveAction;
 import org.eclipse.che.ide.api.action.ActionEvent;
 import org.eclipse.che.ide.api.action.PromisableAction;
 import org.eclipse.che.ide.api.app.AppContext;
-import org.eclipse.che.ide.api.command.CommandImpl;
 import org.eclipse.che.ide.api.command.CommandManager;
 import org.eclipse.che.ide.api.editor.texteditor.TextEditor;
 import org.eclipse.che.ide.api.parts.ActivePartChangedEvent;
 import org.eclipse.che.ide.api.parts.PartPresenter;
 import org.eclipse.che.ide.api.resources.Resource;
 import org.eclipse.che.ide.api.selection.Selection;
-import org.eclipse.che.ide.command.explorer.CommandsExplorerPresenter;
-import org.eclipse.che.ide.command.explorer.CommandsExplorerView;
 import org.eclipse.che.ide.resources.DeleteResourceManager;
 
 /**
@@ -52,8 +49,6 @@ public class DeleteResourceAction extends AbstractPerspectiveAction implements P
 
   private final DeleteResourceManager deleteResourceManager;
   private final AppContext appContext;
-  private final CommandsExplorerPresenter commandsExplorer;
-  private final CommandManager commandManager;
 
   private Callback<Void, Throwable> actionCompletedCallBack;
   private PartPresenter activePart;
@@ -65,7 +60,6 @@ public class DeleteResourceAction extends AbstractPerspectiveAction implements P
       CoreLocalizationConstant localization,
       AppContext appContext,
       EventBus eventBus,
-      CommandsExplorerPresenter commandsExplorer,
       CommandManager commandManager) {
     super(
         singletonList(PROJECT_PERSPECTIVE_ID),
@@ -74,8 +68,6 @@ public class DeleteResourceAction extends AbstractPerspectiveAction implements P
         resources.delete());
     this.deleteResourceManager = deleteResourceManager;
     this.appContext = appContext;
-    this.commandsExplorer = commandsExplorer;
-    this.commandManager = commandManager;
 
     eventBus.addHandler(ActivePartChangedEvent.TYPE, event -> activePart = event.getActivePart());
   }
@@ -83,34 +75,17 @@ public class DeleteResourceAction extends AbstractPerspectiveAction implements P
   /** {@inheritDoc} */
   @Override
   public void actionPerformed(ActionEvent e) {
-    if (activePart instanceof CommandsExplorerPresenter) {
-      CommandImpl command =
-          ((CommandsExplorerView) commandsExplorer.getView()).getSelectedCommand();
-      if (command != null) {
-        commandManager
-            .removeCommand(command.getName())
-            .then(this::onSuccess)
-            .catchError(this::onFailure);
-      }
-    } else {
-      deleteResourceManager
-          .delete(true, appContext.getResources())
-          .then(this::onSuccess)
-          .catchError(this::onFailure);
-    }
+
+    deleteResourceManager
+        .delete(true, appContext.getResources())
+        .then(this::onSuccess)
+        .catchError(this::onFailure);
   }
 
   /** {@inheritDoc} */
   @Override
   public void updateInPerspective(@NotNull ActionEvent event) {
     event.getPresentation().setVisible(true);
-
-    if (activePart instanceof CommandsExplorerPresenter) {
-      CommandImpl command =
-          ((CommandsExplorerView) commandsExplorer.getView()).getSelectedCommand();
-      event.getPresentation().setEnabled(command != null);
-      return;
-    }
 
     final Resource[] resources = appContext.getResources();
 

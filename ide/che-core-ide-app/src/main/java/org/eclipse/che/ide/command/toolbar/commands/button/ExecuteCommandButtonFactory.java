@@ -23,8 +23,6 @@ import org.eclipse.che.ide.api.command.CommandGoal;
 import org.eclipse.che.ide.api.command.CommandImpl;
 import org.eclipse.che.ide.api.keybinding.KeyBindingAgent;
 import org.eclipse.che.ide.command.CommandResources;
-import org.eclipse.che.ide.command.goal.DebugGoal;
-import org.eclipse.che.ide.command.goal.RunGoal;
 import org.eclipse.che.ide.command.toolbar.ToolbarMessages;
 import org.eclipse.che.ide.command.toolbar.commands.ExecuteCommandView.ActionDelegate;
 import org.eclipse.che.ide.util.input.CharCodeWithModifiers;
@@ -40,8 +38,6 @@ public class ExecuteCommandButtonFactory {
   private final ActionManager actionManager;
   private final KeyBindingAgent keyBindingAgent;
   private final ToolbarMessages messages;
-  private final RunGoal runGoal;
-  private final DebugGoal debugGoal;
 
   @Inject
   public ExecuteCommandButtonFactory(
@@ -49,8 +45,6 @@ public class ExecuteCommandButtonFactory {
       AppContext appContext,
       MenuItemsFactory menuItemsFactory,
       ToolbarMessages messages,
-      RunGoal runGoal,
-      DebugGoal debugGoal,
       ActionManager actionManager,
       KeyBindingAgent keyBindingAgent,
       Resources ideResources) {
@@ -58,8 +52,6 @@ public class ExecuteCommandButtonFactory {
     this.appContext = appContext;
     this.menuItemsFactory = menuItemsFactory;
     this.messages = messages;
-    this.runGoal = runGoal;
-    this.debugGoal = debugGoal;
     this.actionManager = actionManager;
     this.keyBindingAgent = keyBindingAgent;
     this.ideResources = ideResources;
@@ -116,14 +108,6 @@ public class ExecuteCommandButtonFactory {
   /** Returns {@link FontAwesome} icon for the given goal. */
   private SafeHtml getIconForGoal(CommandGoal goal) {
     final SafeHtmlBuilder safeHtmlBuilder = new SafeHtmlBuilder();
-
-    if (goal.equals(runGoal)) {
-      safeHtmlBuilder.appendHtmlConstant(
-          "<img src=\"" + ideResources.run().getSafeUri().asString() + "\">");
-    } else if (goal.equals(debugGoal)) {
-      safeHtmlBuilder.appendHtmlConstant(
-          "<img src=\"" + ideResources.debug().getSafeUri().asString() + "\">");
-    }
 
     return safeHtmlBuilder.toSafeHtml();
   }

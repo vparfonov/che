@@ -15,8 +15,6 @@ import com.google.inject.assistedinject.Assisted;
 import org.eclipse.che.ide.api.action.ActionEvent;
 import org.eclipse.che.ide.api.action.ActionManager;
 import org.eclipse.che.ide.api.action.DefaultActionGroup;
-import org.eclipse.che.ide.api.command.CommandGoal;
-import org.eclipse.che.ide.api.command.CommandGoalRegistry;
 import org.eclipse.che.ide.api.icon.Icon;
 import org.eclipse.che.ide.api.icon.IconRegistry;
 import org.vectomatic.dom.svg.ui.SVGImage;
@@ -29,19 +27,13 @@ import org.vectomatic.dom.svg.ui.SVGResource;
  */
 class GoalPopUpGroup extends DefaultActionGroup {
 
-  private final CommandGoal commandGoal;
   private final IconRegistry iconRegistry;
 
   @Inject
-  GoalPopUpGroup(
-      @Assisted String goalId,
-      ActionManager actionManager,
-      CommandGoalRegistry goalRegistry,
-      IconRegistry iconRegistry) {
+  GoalPopUpGroup(@Assisted String goalId, ActionManager actionManager, IconRegistry iconRegistry) {
     super(actionManager);
 
     this.iconRegistry = iconRegistry;
-    commandGoal = goalRegistry.getGoalForId(goalId);
 
     setPopup(true);
 
@@ -54,13 +46,11 @@ class GoalPopUpGroup extends DefaultActionGroup {
 
   @Override
   public void update(ActionEvent e) {
-    e.getPresentation().setText(commandGoal.getId() + " (" + getChildrenCount() + ")");
+    e.getPresentation().setText("xxx");
   }
 
   private SVGResource getCommandGoalIcon() {
-    final String goalId = commandGoal.getId();
-
-    final Icon icon = iconRegistry.getIconIfExist("command.goal." + goalId);
+    final Icon icon = iconRegistry.getIconIfExist("command.goal.");
 
     if (icon != null) {
       final SVGImage svgImage = icon.getSVGImage();

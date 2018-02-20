@@ -20,9 +20,6 @@ import java.util.Set;
 import org.eclipse.che.commons.annotation.Nullable;
 import org.eclipse.che.ide.api.command.CommandGoal;
 import org.eclipse.che.ide.api.command.CommandImpl;
-import org.eclipse.che.ide.api.keybinding.KeyBuilder;
-import org.eclipse.che.ide.command.goal.DebugGoal;
-import org.eclipse.che.ide.command.goal.RunGoal;
 import org.eclipse.che.ide.command.toolbar.commands.button.ExecuteCommandButton;
 import org.eclipse.che.ide.command.toolbar.commands.button.ExecuteCommandButtonFactory;
 import org.eclipse.che.ide.command.toolbar.commands.button.ExecuteCommandButtonItemsProvider;
@@ -42,18 +39,11 @@ public class ExecuteCommandViewImpl implements ExecuteCommandView {
   private final FlowPanel buttonsPanel;
 
   private final ExecuteCommandButtonFactory buttonFactory;
-  private final RunGoal runGoal;
-  private final DebugGoal debugGoal;
-
   private ActionDelegate delegate;
 
   @Inject
-  public ExecuteCommandViewImpl(
-      ExecuteCommandButtonFactory buttonFactory, RunGoal runGoal, DebugGoal debugGoal) {
+  public ExecuteCommandViewImpl(ExecuteCommandButtonFactory buttonFactory) {
     this.buttonFactory = buttonFactory;
-    this.runGoal = runGoal;
-    this.debugGoal = debugGoal;
-
     goalButtons = new HashMap<>();
     buttonsPanel = new FlowPanel();
   }
@@ -113,12 +103,6 @@ public class ExecuteCommandViewImpl implements ExecuteCommandView {
 
   @Nullable
   private CharCodeWithModifiers getKeyBinding(CommandGoal goal) {
-    if (goal.equals(runGoal)) {
-      return new KeyBuilder().alt().charCode('r').build();
-    } else if (goal.equals(debugGoal)) {
-      return new KeyBuilder().alt().charCode('d').build();
-    }
-
     return null;
   }
 }

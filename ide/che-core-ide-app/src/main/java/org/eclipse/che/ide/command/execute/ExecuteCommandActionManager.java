@@ -25,7 +25,6 @@ import org.eclipse.che.ide.api.action.Action;
 import org.eclipse.che.ide.api.action.ActionManager;
 import org.eclipse.che.ide.api.action.DefaultActionGroup;
 import org.eclipse.che.ide.api.command.CommandAddedEvent;
-import org.eclipse.che.ide.api.command.CommandGoalRegistry;
 import org.eclipse.che.ide.api.command.CommandImpl;
 import org.eclipse.che.ide.api.command.CommandManager;
 import org.eclipse.che.ide.api.command.CommandRemovedEvent;
@@ -49,7 +48,6 @@ public class ExecuteCommandActionManager {
   private final CommandsActionGroup commandsActionGroup;
   private final GoalPopUpGroupFactory goalPopUpGroupFactory;
   private final ExecuteCommandActionFactory commandActionFactory;
-  private final CommandGoalRegistry goalRegistry;
 
   /** Map of command's name to an appropriate {@link ExecuteCommandAction}. */
   private final Map<String, Action> commandActions;
@@ -63,14 +61,12 @@ public class ExecuteCommandActionManager {
       CommandsActionGroup commandsActionGroup,
       GoalPopUpGroupFactory goalPopUpGroupFactory,
       ExecuteCommandActionFactory commandActionFactory,
-      CommandGoalRegistry goalRegistry,
       EventBus eventBus) {
     this.commandManagerProvider = commandManagerProvider;
     this.actionManager = actionManager;
     this.commandsActionGroup = commandsActionGroup;
     this.goalPopUpGroupFactory = goalPopUpGroupFactory;
     this.commandActionFactory = commandActionFactory;
-    this.goalRegistry = goalRegistry;
 
     commandActions = new HashMap<>();
     goalPopUpGroups = new HashMap<>();
@@ -149,7 +145,7 @@ public class ExecuteCommandActionManager {
   private DefaultActionGroup getActionGroupForCommand(CommandImpl command) {
     String goalId = command.getGoal();
     if (isNullOrEmpty(goalId)) {
-      goalId = goalRegistry.getDefaultGoal().getId();
+      goalId = "";
     }
 
     DefaultActionGroup commandGoalPopUpGroup = goalPopUpGroups.get(goalId);
@@ -191,7 +187,7 @@ public class ExecuteCommandActionManager {
       // remove action from it's action group
       String goalId = command.getGoal();
       if (isNullOrEmpty(goalId)) {
-        goalId = goalRegistry.getDefaultGoal().getId();
+        goalId = "";
       }
 
       // remove action group if it's empty

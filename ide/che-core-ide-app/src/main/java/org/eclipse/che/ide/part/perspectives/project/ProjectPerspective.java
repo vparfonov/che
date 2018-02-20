@@ -22,7 +22,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import javax.validation.constraints.NotNull;
 import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.api.parts.PartStack;
-import org.eclipse.che.ide.command.explorer.CommandsExplorerPresenter;
 import org.eclipse.che.ide.part.PartStackPresenterFactory;
 import org.eclipse.che.ide.part.PartStackViewFactory;
 import org.eclipse.che.ide.part.WorkBenchControllerFactory;
@@ -55,7 +54,6 @@ public class ProjectPerspective extends AbstractPerspective {
       EventBus eventBus,
       DynaProvider dynaProvider,
       ProjectExplorerPresenter projectExplorerPresenter,
-      CommandsExplorerPresenter commandsExplorerPresenter,
       NotificationManager notificationManager,
       ProcessesPanelPresenter processesPanelPresenter) {
     super(
@@ -70,7 +68,6 @@ public class ProjectPerspective extends AbstractPerspective {
     partStacks.put(EDITING, editorMultiPartStackPresenter);
 
     addPart(projectExplorerPresenter, NAVIGATION);
-    addPart(commandsExplorerPresenter, NAVIGATION);
     addPart(notificationManager, INFORMATION);
     addPart(processesPanelPresenter, INFORMATION);
 

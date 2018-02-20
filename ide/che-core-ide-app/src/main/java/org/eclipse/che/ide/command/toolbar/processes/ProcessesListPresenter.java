@@ -30,40 +30,31 @@ import org.eclipse.che.ide.api.workspace.model.MachineImpl;
 import org.eclipse.che.ide.api.workspace.model.RuntimeImpl;
 import org.eclipse.che.ide.api.workspace.model.WorkspaceImpl;
 import org.eclipse.che.ide.bootstrap.BasicIDEInitializedEvent;
-import org.eclipse.che.ide.command.toolbar.CommandCreationGuide;
 
 /** Drives the UI for displaying processes list. */
 @Singleton
 public class ProcessesListPresenter implements Presenter, ProcessesListView.ActionDelegate {
 
-  private final ProcessesListView view;
   private final EventBus eventBus;
   private final ExecAgentCommandManager execAgentClient;
   private final AppContext appContext;
   private final CommandManager commandManager;
   private final Provider<CommandExecutor> commandExecutorProvider;
-  private final CommandCreationGuide commandCreationGuide;
 
   private final Map<Integer, Process> runningProcesses;
 
   @Inject
   public ProcessesListPresenter(
-      ProcessesListView view,
       EventBus eventBus,
       ExecAgentCommandManager execAgentClient,
       AppContext appContext,
       CommandManager commandManager,
-      Provider<CommandExecutor> commandExecutorProvider,
-      CommandCreationGuide commandCreationGuide) {
-    this.view = view;
+      Provider<CommandExecutor> commandExecutorProvider) {
     this.eventBus = eventBus;
     this.execAgentClient = execAgentClient;
     this.appContext = appContext;
     this.commandManager = commandManager;
     this.commandExecutorProvider = commandExecutorProvider;
-    this.commandCreationGuide = commandCreationGuide;
-
-    view.setDelegate(this);
 
     runningProcesses = new HashMap<>();
 
@@ -77,37 +68,19 @@ public class ProcessesListPresenter implements Presenter, ProcessesListView.Acti
         WorkspaceStoppedEvent.TYPE,
         e -> {
           runningProcesses.clear();
-          view.clearList();
         });
 
     eventBus.addHandler(
         ProcessStartedEvent.TYPE,
         event -> addProcessToList(event.getProcessID(), event.getMachineName()));
 
-    eventBus.addHandler(
-        ProcessFinishedEvent.TYPE,
-        event -> {
-          Process process = runningProcesses.get(event.getProcessID());
+    eventBus.addHandler(ProcessFinishedEvent.TYPE, event -> {});
 
-          if (process != null) {
-            view.processStopped(process);
-          }
-        });
-
-    eventBus.addHandler(
-        ProcessOutputClosedEvent.TYPE,
-        event -> {
-          Process process = runningProcesses.get(event.getPid());
-
-          if (process != null) {
-            view.removeProcess(process);
-          }
-        });
+    eventBus.addHandler(ProcessOutputClosedEvent.TYPE, event -> {});
   }
 
   /** Updates view with all running processes. */
   private void updateView() {
-    view.clearList();
     runningProcesses.clear();
 
     final WorkspaceImpl workspace = appContext.getWorkspace();
@@ -131,8 +104,6 @@ public class ProcessesListPresenter implements Presenter, ProcessesListView.Acti
                           p.isAlive(),
                           machine.getName());
                   runningProcesses.put(process.getPid(), process);
-
-                  view.addProcess(process);
                 }
               });
     }
@@ -157,15 +128,11 @@ public class ProcessesListPresenter implements Presenter, ProcessesListView.Acti
                       processDto.isAlive(),
                       machineName);
               runningProcesses.put(process.getPid(), process);
-
-              view.addProcess(process);
             });
   }
 
   @Override
-  public void go(AcceptsOneWidget container) {
-    container.setWidget(view);
-  }
+  public void go(AcceptsOneWidget container) {}
 
   @Override
   public void onProcessChosen(Process process) {
@@ -187,7 +154,5 @@ public class ProcessesListPresenter implements Presenter, ProcessesListView.Acti
   }
 
   @Override
-  public void onCreateCommand() {
-    commandCreationGuide.guide();
-  }
+  public void onCreateCommand() {}
 }

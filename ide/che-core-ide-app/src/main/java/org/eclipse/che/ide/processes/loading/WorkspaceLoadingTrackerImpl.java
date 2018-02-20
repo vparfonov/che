@@ -19,7 +19,6 @@ import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONValue;
-import com.google.gwt.user.client.Timer;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.web.bindery.event.shared.EventBus;
@@ -39,7 +38,6 @@ import org.eclipse.che.ide.api.workspace.event.WorkspaceStoppingEvent;
 import org.eclipse.che.ide.api.workspace.model.EnvironmentImpl;
 import org.eclipse.che.ide.api.workspace.model.MachineConfigImpl;
 import org.eclipse.che.ide.api.workspace.model.MachineImpl;
-import org.eclipse.che.ide.command.toolbar.processes.ProcessesListView;
 import org.eclipse.che.ide.machine.MachineResources;
 import org.eclipse.che.ide.processes.DisplayMachineOutputEvent;
 import org.eclipse.che.ide.processes.panel.ProcessesPanelPresenter;
@@ -66,7 +64,6 @@ public class WorkspaceLoadingTrackerImpl
   private final ProcessesPanelPresenter processesPanelPresenter;
   private final MachineResources resources;
   private final WorkspaceLoadingTrackerView view;
-  private final ProcessesListView processesListView;
   private final CoreLocalizationConstant localizationConstant;
   private final EventBus eventBus;
 
@@ -84,14 +81,12 @@ public class WorkspaceLoadingTrackerImpl
       ProcessesPanelPresenter processesPanelPresenter,
       MachineResources resources,
       WorkspaceLoadingTrackerView view,
-      ProcessesListView processesListView,
       CoreLocalizationConstant localizationConstant,
       AsyncRequestFactory asyncRequestFactory) {
     this.appContext = appContext;
     this.processesPanelPresenter = processesPanelPresenter;
     this.resources = resources;
     this.view = view;
-    this.processesListView = processesListView;
     this.localizationConstant = localizationConstant;
     this.asyncRequestFactory = asyncRequestFactory;
     this.eventBus = eventBus;
@@ -103,12 +98,7 @@ public class WorkspaceLoadingTrackerImpl
     eventBus.addHandler(WorkspaceStoppedEvent.TYPE, this);
     eventBus.addHandler(WorkspaceStoppingEvent.TYPE, this);
 
-    eventBus.addHandler(
-        MachineRunningEvent.TYPE,
-        event -> {
-          processesListView.setLoadingMessage(
-              localizationConstant.menuLoaderMachineRunning(event.getMachine().getName()));
-        });
+    eventBus.addHandler(MachineRunningEvent.TYPE, event -> {});
 
     eventBus.addHandler(InstallerStartingEvent.TYPE, this);
     eventBus.addHandler(InstallerRunningEvent.TYPE, this);
@@ -127,10 +117,6 @@ public class WorkspaceLoadingTrackerImpl
 
     showWorkspaceStatusPanel();
     addMachines();
-
-    processesListView.setLoadMode();
-    processesListView.setLoadingMessage(localizationConstant.menuLoaderWaitingWorkspace());
-    processesListView.setLoadingProgress(0);
   }
 
   private void showWorkspaceStatusPanel() {
@@ -262,9 +248,6 @@ public class WorkspaceLoadingTrackerImpl
 
     addMachines();
     showInstallers();
-
-    processesListView.setLoadMode();
-    processesListView.setLoadingMessage(localizationConstant.menuLoaderWaitingWorkspace());
   }
 
   @Override
@@ -273,9 +256,6 @@ public class WorkspaceLoadingTrackerImpl
 
     view.showWorkspaceStarted();
 
-    processesListView.setLoadingMessage(localizationConstant.menuLoaderWorkspaceStarted());
-    processesListView.setLoadingProgress(100);
-
     Scheduler.get()
         .scheduleDeferred(
             () -> {
@@ -283,12 +263,7 @@ public class WorkspaceLoadingTrackerImpl
             });
 
     /* Delay in switching to command execution mode */
-    new Timer() {
-      @Override
-      public void run() {
-        processesListView.setExecMode();
-      }
-    }.schedule(3000);
+
   }
 
   @Override
@@ -297,17 +272,10 @@ public class WorkspaceLoadingTrackerImpl
 
     showPanel();
     view.showWorkspaceStopping();
-
-    processesListView.setLoadMode();
-    processesListView.setLoadingMessage(localizationConstant.menuLoaderWorkspaceStopping());
-    processesListView.setLoadingProgress(100);
   }
 
   @Override
   public void onWorkspaceStopped(WorkspaceStoppedEvent event) {
-    processesListView.setLoadMode();
-    processesListView.setLoadingMessage(localizationConstant.menuLoaderWorkspaceStopped());
-    processesListView.setLoadingProgress(0);
 
     if (isWorkspaceStarting) {
       view.showWorkspaceFailed(null);

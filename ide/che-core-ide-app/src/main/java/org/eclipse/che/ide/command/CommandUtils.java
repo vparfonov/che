@@ -12,14 +12,12 @@ package org.eclipse.che.ide.command;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.che.commons.annotation.Nullable;
 import org.eclipse.che.ide.api.command.CommandGoal;
-import org.eclipse.che.ide.api.command.CommandGoalRegistry;
 import org.eclipse.che.ide.api.command.CommandImpl;
 import org.eclipse.che.ide.api.command.CommandType;
 import org.eclipse.che.ide.api.command.CommandTypeRegistry;
@@ -36,16 +34,11 @@ import org.vectomatic.dom.svg.ui.SVGResource;
 @Singleton
 public class CommandUtils {
 
-  private final CommandGoalRegistry goalRegistry;
   private final CommandTypeRegistry commandTypeRegistry;
   private final IconRegistry iconRegistry;
 
   @Inject
-  public CommandUtils(
-      CommandGoalRegistry commandGoalRegistry,
-      CommandTypeRegistry commandTypeRegistry,
-      IconRegistry iconRegistry) {
-    this.goalRegistry = commandGoalRegistry;
+  public CommandUtils(CommandTypeRegistry commandTypeRegistry, IconRegistry iconRegistry) {
     this.commandTypeRegistry = commandTypeRegistry;
     this.iconRegistry = iconRegistry;
   }
@@ -57,13 +50,6 @@ public class CommandUtils {
    */
   public Map<CommandGoal, List<CommandImpl>> groupCommandsByGoal(List<CommandImpl> commands) {
     final Map<CommandGoal, List<CommandImpl>> commandsByGoal = new HashMap<>();
-
-    for (CommandImpl command : commands) {
-      final String goalId = command.getGoal();
-      final CommandGoal commandGoal = goalRegistry.getGoalForId(goalId);
-
-      commandsByGoal.computeIfAbsent(commandGoal, key -> new ArrayList<>()).add(command);
-    }
 
     return commandsByGoal;
   }
@@ -91,19 +77,20 @@ public class CommandUtils {
   /** Returns the icon for the given command goal ID or {@code null} if none. */
   @Nullable
   public SVGResource getCommandGoalIcon(String goalId) {
-    final Optional<CommandGoal> goalOptional = goalRegistry.getPredefinedGoalById(goalId);
-
-    if (goalOptional.isPresent()) {
-      final Icon icon = iconRegistry.getIconIfExist("command.goal." + goalOptional.get().getId());
-
-      if (icon != null) {
-        final SVGImage svgImage = icon.getSVGImage();
-
-        if (svgImage != null) {
-          return icon.getSVGResource();
-        }
-      }
-    }
+    //    final Optional<CommandGoal> goalOptional = goalRegistry.getPredefinedGoalById(goalId);
+    //
+    //    if (goalOptional.isPresent()) {
+    //      final Icon icon = iconRegistry.getIconIfExist("command.goal." +
+    // goalOptional.get().getId());
+    //
+    //      if (icon != null) {
+    //        final SVGImage svgImage = icon.getSVGImage();
+    //
+    //        if (svgImage != null) {
+    //          return icon.getSVGResource();
+    //        }
+    //      }
+    //    }
 
     return null;
   }

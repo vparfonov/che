@@ -21,7 +21,6 @@ import static org.mockito.Mockito.when;
 import java.util.Optional;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.command.CommandImpl;
-import org.eclipse.che.ide.command.goal.RunGoal;
 import org.eclipse.che.ide.ui.menubutton.ItemsProvider.DataChangedHandler;
 import org.eclipse.che.ide.ui.menubutton.MenuItem;
 import org.junit.Test;
@@ -36,7 +35,6 @@ public class ExecuteCommandButtonItemsProviderTest {
 
   @Mock private AppContext appContext;
   @Mock private MenuItemsFactory menuItemsFactory;
-  @Mock private RunGoal goal;
 
   @InjectMocks private ExecuteCommandButtonItemsProvider provider;
 
@@ -92,13 +90,5 @@ public class ExecuteCommandButtonItemsProviderTest {
     // then
     assertThat(provider.getItems()).hasSize(1).containsOnly(commandItem2);
     verify(dataChangedHandler, times(3)).onDataChanged();
-  }
-
-  @Test
-  public void shouldProvideGuideItemOnlyWhenNoCommands() throws Exception {
-    GuideItem guideItem = mock(GuideItem.class);
-    when(menuItemsFactory.newGuideItem(goal)).thenReturn(guideItem);
-
-    assertThat(provider.getItems()).hasSize(1).containsOnly(guideItem);
   }
 }

@@ -24,9 +24,6 @@ import org.eclipse.che.ide.api.command.CommandGoal;
 import org.eclipse.che.ide.api.command.CommandImpl;
 import org.eclipse.che.ide.api.command.CommandManager;
 import org.eclipse.che.ide.api.workspace.model.MachineImpl;
-import org.eclipse.che.ide.command.goal.DebugGoal;
-import org.eclipse.che.ide.command.goal.RunGoal;
-import org.eclipse.che.ide.command.toolbar.CommandCreationGuide;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,9 +38,6 @@ public class ExecuteCommandPresenterTest {
   @Mock private ExecuteCommandView view;
   @Mock private CommandManager commandManager;
   @Mock private Provider<CommandExecutor> commandExecutorProvider;
-  @Mock private CommandCreationGuide commandCreationGuide;
-  @Mock private RunGoal runGoal;
-  @Mock private DebugGoal debugGoal;
   @Mock private EventBus eventBus;
 
   @InjectMocks private ExecuteCommandPresenter presenter;
@@ -95,7 +89,5 @@ public class ExecuteCommandPresenterTest {
     CommandGoal goal = mock(CommandGoal.class);
 
     presenter.onGuide(goal);
-
-    verify(commandCreationGuide).guide(eq(goal));
   }
 }

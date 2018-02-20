@@ -39,7 +39,6 @@ import org.eclipse.che.ide.api.action.Presentation;
 import org.eclipse.che.ide.api.action.Separator;
 import org.eclipse.che.ide.api.keybinding.KeyBindingAgent;
 import org.eclipse.che.ide.api.parts.PerspectiveManager;
-import org.eclipse.che.ide.command.toolbar.CommandToolbarPresenter;
 import org.eclipse.che.ide.ui.toolbar.CloseMenuHandler;
 import org.eclipse.che.ide.ui.toolbar.MenuLockLayer;
 import org.eclipse.che.ide.ui.toolbar.PresentationFactory;
@@ -86,8 +85,7 @@ public class MainMenuViewImpl extends Composite
       MenuResources resources,
       ActionManager actionManager,
       KeyBindingAgent keyBindingAgent,
-      Provider<PerspectiveManager> managerProvider,
-      CommandToolbarPresenter toolbarPresenter) {
+      Provider<PerspectiveManager> managerProvider) {
     this.resources = resources;
     this.actionManager = actionManager;
     this.keyBindingAgent = keyBindingAgent;
@@ -114,8 +112,6 @@ public class MainMenuViewImpl extends Composite
     rootPanel.add(table);
     rootPanel.getElement().appendChild((Element) triangleSeparator);
     rootPanel.add(rightPanel);
-
-    toolbarPresenter.go(rightPanel::add);
   }
 
   @Override

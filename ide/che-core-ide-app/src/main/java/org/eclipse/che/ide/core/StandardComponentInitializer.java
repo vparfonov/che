@@ -96,7 +96,6 @@ import org.eclipse.che.ide.actions.common.HidePartAction;
 import org.eclipse.che.ide.actions.common.MaximizePartAction;
 import org.eclipse.che.ide.actions.common.RestorePartAction;
 import org.eclipse.che.ide.actions.find.FindActionAction;
-import org.eclipse.che.ide.actions.switching.CommandsExplorerDisplayingModeAction;
 import org.eclipse.che.ide.actions.switching.EditorDisplayingModeAction;
 import org.eclipse.che.ide.actions.switching.EventLogsDisplayingModeAction;
 import org.eclipse.che.ide.actions.switching.FindResultDisplayingModeAction;
@@ -118,9 +117,6 @@ import org.eclipse.che.ide.api.keybinding.KeyBindingAgent;
 import org.eclipse.che.ide.api.keybinding.KeyBuilder;
 import org.eclipse.che.ide.api.parts.Perspective;
 import org.eclipse.che.ide.api.parts.PerspectiveManager;
-import org.eclipse.che.ide.command.actions.MoveCommandAction;
-import org.eclipse.che.ide.command.actions.RenameCommandAction;
-import org.eclipse.che.ide.command.editor.CommandEditorProvider;
 import org.eclipse.che.ide.command.palette.ShowCommandsPaletteAction;
 import org.eclipse.che.ide.devmode.DevModeOffAction;
 import org.eclipse.che.ide.devmode.DevModeSetUpAction;
@@ -387,8 +383,6 @@ public class StandardComponentInitializer {
 
   @Inject private PerspectiveManager perspectiveManager;
 
-  @Inject private CommandsExplorerDisplayingModeAction commandsExplorerDisplayingModeAction;
-
   @Inject private ProjectExplorerDisplayingModeAction projectExplorerDisplayingModeAction;
 
   @Inject private EventLogsDisplayingModeAction eventLogsDisplayingModeAction;
@@ -398,10 +392,6 @@ public class StandardComponentInitializer {
   @Inject private EditorDisplayingModeAction editorDisplayingModeAction;
 
   @Inject private TerminalDisplayingModeAction terminalDisplayingModeAction;
-
-  @Inject private RenameCommandAction renameCommandAction;
-
-  @Inject private MoveCommandAction moveCommandAction;
 
   @Inject
   @Named("XMLFileType")
@@ -451,7 +441,7 @@ public class StandardComponentInitializer {
   @Named("JPGFileType")
   private FileType jpgFile;
 
-  @Inject private CommandEditorProvider commandEditorProvider;
+  //  @Inject private CommandEditorProvider commandEditorProvider;
 
   @Inject
   @Named("CommandFileType")
@@ -512,8 +502,8 @@ public class StandardComponentInitializer {
     fileTypeRegistry.registerFileType(jpgFile);
     editorRegistry.registerDefaultEditor(jpgFile, imageViewerProvider);
 
-    fileTypeRegistry.registerFileType(commandFileType);
-    editorRegistry.registerDefaultEditor(commandFileType, commandEditorProvider);
+    //    fileTypeRegistry.registerFileType(commandFileType);
+    //    editorRegistry.registerDefaultEditor(commandFileType, commandEditorProvider);
 
     // Workspace (New Menu)
     DefaultActionGroup workspaceGroup =
@@ -660,8 +650,6 @@ public class StandardComponentInitializer {
         PROJECT_EXPLORER_DISPLAYING_MODE, projectExplorerDisplayingModeAction);
     actionManager.registerAction(FIND_RESULT_DISPLAYING_MODE, findResultDisplayingModeAction);
     actionManager.registerAction(EVENT_LOGS_DISPLAYING_MODE, eventLogsDisplayingModeAction);
-    actionManager.registerAction(
-        COMMAND_EXPLORER_DISPLAYING_MODE, commandsExplorerDisplayingModeAction);
     actionManager.registerAction(EDITOR_DISPLAYING_MODE, editorDisplayingModeAction);
     actionManager.registerAction(TERMINAL_DISPLAYING_MODE, terminalDisplayingModeAction);
     toolWindowsGroup.add(projectExplorerDisplayingModeAction, FIRST);
@@ -669,8 +657,6 @@ public class StandardComponentInitializer {
         eventLogsDisplayingModeAction, new Constraints(AFTER, PROJECT_EXPLORER_DISPLAYING_MODE));
     toolWindowsGroup.add(
         findResultDisplayingModeAction, new Constraints(AFTER, EVENT_LOGS_DISPLAYING_MODE));
-    toolWindowsGroup.add(
-        commandsExplorerDisplayingModeAction, new Constraints(AFTER, FIND_RESULT_DISPLAYING_MODE));
     toolWindowsGroup.add(editorDisplayingModeAction);
     toolWindowsGroup.add(terminalDisplayingModeAction);
 
@@ -865,11 +851,6 @@ public class StandardComponentInitializer {
 
     DefaultActionGroup commandExplorerMenuGroup = new DefaultActionGroup(actionManager);
     actionManager.registerAction(GROUP_COMMAND_EXPLORER_CONTEXT_MENU, commandExplorerMenuGroup);
-
-    actionManager.registerAction("renameCommand", renameCommandAction);
-    commandExplorerMenuGroup.add(renameCommandAction);
-    actionManager.registerAction("moveCommand", moveCommandAction);
-    commandExplorerMenuGroup.add(moveCommandAction);
 
     // Define hot-keys
     keyBinding

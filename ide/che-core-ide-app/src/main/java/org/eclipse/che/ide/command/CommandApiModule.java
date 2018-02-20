@@ -20,36 +20,15 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eclipse.che.ide.Resources;
 import org.eclipse.che.ide.api.command.CommandExecutor;
-import org.eclipse.che.ide.api.command.CommandGoal;
-import org.eclipse.che.ide.api.command.CommandGoalRegistry;
 import org.eclipse.che.ide.api.command.CommandManager;
 import org.eclipse.che.ide.api.command.CommandProducer;
 import org.eclipse.che.ide.api.command.CommandType;
 import org.eclipse.che.ide.api.command.CommandTypeRegistry;
 import org.eclipse.che.ide.api.filetypes.FileType;
-import org.eclipse.che.ide.command.editor.CommandEditorView;
-import org.eclipse.che.ide.command.editor.CommandEditorViewImpl;
-import org.eclipse.che.ide.command.editor.page.goal.GoalPageView;
-import org.eclipse.che.ide.command.editor.page.goal.GoalPageViewImpl;
-import org.eclipse.che.ide.command.editor.page.name.NamePageView;
-import org.eclipse.che.ide.command.editor.page.name.NamePageViewImpl;
-import org.eclipse.che.ide.command.editor.page.project.ProjectsPageView;
-import org.eclipse.che.ide.command.editor.page.project.ProjectsPageViewImpl;
-import org.eclipse.che.ide.command.editor.page.text.PageWithTextEditorView;
-import org.eclipse.che.ide.command.editor.page.text.PageWithTextEditorViewImpl;
 import org.eclipse.che.ide.command.execute.CommandExecutorImpl;
 import org.eclipse.che.ide.command.execute.ExecuteCommandActionFactory;
 import org.eclipse.che.ide.command.execute.ExecuteCommandActionManager;
 import org.eclipse.che.ide.command.execute.GoalPopUpGroupFactory;
-import org.eclipse.che.ide.command.explorer.CommandsExplorerView;
-import org.eclipse.che.ide.command.explorer.CommandsExplorerViewImpl;
-import org.eclipse.che.ide.command.goal.BuildGoal;
-import org.eclipse.che.ide.command.goal.CommandGoalRegistryImpl;
-import org.eclipse.che.ide.command.goal.CommonGoal;
-import org.eclipse.che.ide.command.goal.DebugGoal;
-import org.eclipse.che.ide.command.goal.DeployGoal;
-import org.eclipse.che.ide.command.goal.RunGoal;
-import org.eclipse.che.ide.command.goal.TestGoal;
 import org.eclipse.che.ide.command.manager.CommandManagerImpl;
 import org.eclipse.che.ide.command.node.NodeFactory;
 import org.eclipse.che.ide.command.palette.CommandsPaletteView;
@@ -66,8 +45,6 @@ import org.eclipse.che.ide.command.toolbar.controller.ToolbarControllerView;
 import org.eclipse.che.ide.command.toolbar.controller.ToolbarControllerViewImpl;
 import org.eclipse.che.ide.command.toolbar.previews.PreviewsView;
 import org.eclipse.che.ide.command.toolbar.previews.PreviewsViewImpl;
-import org.eclipse.che.ide.command.toolbar.processes.ProcessesListView;
-import org.eclipse.che.ide.command.toolbar.processes.ProcessesListViewImpl;
 import org.eclipse.che.ide.command.toolbar.selector.PanelSelectorView;
 import org.eclipse.che.ide.command.toolbar.selector.PanelSelectorViewImpl;
 import org.eclipse.che.ide.command.type.CommandTypeRegistryImpl;
@@ -86,18 +63,7 @@ public class CommandApiModule extends AbstractGinModule {
   protected void configure() {
     GinMultibinder.newSetBinder(binder(), CommandType.class);
 
-    // predefined goals
-    GinMultibinder<CommandGoal> goalBinder =
-        GinMultibinder.newSetBinder(binder(), CommandGoal.class);
-    goalBinder.addBinding().to(BuildGoal.class);
-    goalBinder.addBinding().to(TestGoal.class);
-    goalBinder.addBinding().to(RunGoal.class);
-    goalBinder.addBinding().to(DebugGoal.class);
-    goalBinder.addBinding().to(DeployGoal.class);
-    goalBinder.addBinding().to(CommonGoal.class);
-
     bind(CommandTypeRegistry.class).to(CommandTypeRegistryImpl.class).in(Singleton.class);
-    bind(CommandGoalRegistry.class).to(CommandGoalRegistryImpl.class).in(Singleton.class);
 
     bind(CommandManager.class).to(CommandManagerImpl.class).in(Singleton.class);
     bind(CommandManager.class).asEagerSingleton();
@@ -112,21 +78,13 @@ public class CommandApiModule extends AbstractGinModule {
     install(new GinFactoryModuleBuilder().build(NodeFactory.class));
     install(new GinFactoryModuleBuilder().build(CommandProducerActionFactory.class));
 
-    bind(CommandsExplorerView.class).to(CommandsExplorerViewImpl.class).in(Singleton.class);
     bind(CommandTypeChooserView.class).to(CommandTypeChooserViewImpl.class);
     bind(CommandsPaletteView.class).to(CommandsPaletteViewImpl.class).in(Singleton.class);
-
-    // command editor
-    bind(CommandEditorView.class).to(CommandEditorViewImpl.class);
-    bind(NamePageView.class).to(NamePageViewImpl.class);
-    bind(GoalPageView.class).to(GoalPageViewImpl.class);
-    bind(ProjectsPageView.class).to(ProjectsPageViewImpl.class);
-    bind(PageWithTextEditorView.class).to(PageWithTextEditorViewImpl.class);
 
     // toolbar
     bind(CommandToolbarView.class).to(CommandToolbarViewImpl.class).in(Singleton.class);
     bind(ExecuteCommandView.class).to(ExecuteCommandViewImpl.class).in(Singleton.class);
-    bind(ProcessesListView.class).to(ProcessesListViewImpl.class).in(Singleton.class);
+    //    bind(ProcessesListView.class).to(ProcessesListViewImpl.class).in(Singleton.class);
     bind(PreviewsView.class).to(PreviewsViewImpl.class).in(Singleton.class);
 
     // Panel selector
@@ -149,13 +107,5 @@ public class CommandApiModule extends AbstractGinModule {
   @Named("CommandFileType")
   protected FileType provideCommandFileType(Resources resources) {
     return new FileType(resources.defaultImage(), FILE_TYPE_EXT);
-  }
-
-  /** Provides the goal which is used for grouping commands which doesn't belong to any goal. */
-  @Provides
-  @Named("default")
-  @Singleton
-  protected CommandGoal provideDefaultGoal(CommonGoal commonGoal) {
-    return commonGoal;
   }
 }
