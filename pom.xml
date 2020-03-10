@@ -29,10 +29,10 @@
         <module>wsmaster</module>
         <module>multiuser</module>
         <module>infrastructures</module>
-        <module>dashboard</module>
-        <module>workspace-loader</module>
+        <!--<module>dashboard</module>-->
+        <!--<module>workspace-loader</module>-->
         <module>assembly</module>
-        <module>tests/legacy-e2e</module>
+        <!--<module>tests/legacy-e2e</module>-->
     </modules>
     <scm>
         <connection>scm:git:git@github.com:eclipse/che.git</connection>

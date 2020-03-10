@@ -72,6 +72,8 @@ import org.eclipse.che.workspace.infrastructure.kubernetes.wsplugins.PluginBroke
 import org.eclipse.che.workspace.infrastructure.kubernetes.wsplugins.SidecarToolingProvisioner;
 import org.eclipse.che.workspace.infrastructure.kubernetes.wsplugins.brokerphases.BrokerEnvironmentFactory;
 import org.eclipse.che.workspace.infrastructure.kubernetes.wsplugins.events.BrokerService;
+import org.eclipse.che.workspace.infrastructure.openshift.backup.OpenShiftEnvironmentBackupManager;
+import org.eclipse.che.workspace.infrastructure.openshift.backup.WorkspaceBackupHandler;
 import org.eclipse.che.workspace.infrastructure.openshift.devfile.OpenshiftComponentToWorkspaceApplier;
 import org.eclipse.che.workspace.infrastructure.openshift.environment.OpenShiftEnvironment;
 import org.eclipse.che.workspace.infrastructure.openshift.environment.OpenShiftEnvironmentFactory;
@@ -205,5 +207,7 @@ public class OpenShiftInfraModule extends AbstractModule {
 
     bind(ExternalServiceExposureStrategy.class).to(OpenShiftServerExposureStrategy.class);
     bind(CookiePathStrategy.class).to(OpenShiftCookiePathStrategy.class);
+    bind(OpenShiftEnvironmentBackupManager.class);
+    bind(WorkspaceBackupHandler.class);
   }
 }
