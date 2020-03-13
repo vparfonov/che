@@ -288,9 +288,9 @@ public class OpenShiftEnvironmentBackupManager implements EnvironmentBackupManag
         }
       }
 
-// And From your main() method or any other method
-      Timer timer = new Timer();
-      timer.schedule(new SayHello(), 5000, 5000);
+//// And From your main() method or any other method
+//      Timer timer = new Timer();
+//      timer.schedule(new SayHello(), 5000, 5000);
 
 
 

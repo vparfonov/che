@@ -44,10 +44,14 @@ const CLASSES = {
     OpenWorkspaceWidget: 'OpenWorkspaceWidget',
     ContextMenu: 'ContextMenu',
     CheLoginPage: 'CheLoginPage',
+    GitHubUtil: 'GitHubUtil',
+    CheGitApi: 'CheGitApi',
+    GitPlugin: 'GitPlugin',
     TestWorkspaceUtil: 'TestWorkspaceUtil',
     NotificationCenter: 'NotificationCenter',
     PreferencesHandler: 'PreferencesHandler',
-    CheApiRequestHandler: 'CheApiRequestHandler'
+    CheApiRequestHandler: 'CheApiRequestHandler',
+    GetStarted: 'GetStarted'
 };
 
 export { TYPES, CLASSES };
